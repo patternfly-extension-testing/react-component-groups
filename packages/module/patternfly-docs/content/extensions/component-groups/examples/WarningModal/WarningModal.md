@@ -11,6 +11,7 @@ source: react
 # If you use typescript, the name of the interface to display props for
 # These are found through the sourceProps function provided in patternfly-docs.source.js
 propComponents: ['WarningModal']
+sourceLink: https://github.com/patternfly/react-component-groups/blob/main/packages/module/patternfly-docs/content/extensions/component-groups/examples/WarningModal/WarningModal.md
 ---
 
 import WarningModal from '@patternfly/react-component-groups/dist/dynamic/WarningModal';
@@ -28,3 +29,21 @@ You can customize the contents of the modal to fit your use cases. To adjust the
 ```js file="./WarningModalExample.tsx"
 
 ```
+
+### Warning Modal with danger button variant
+
+You can customize the modal to have a confirm button with a danger color
+
+```js file="./WarningModalDangerExample.tsx"
+
+```
+
+
+### Warning Modal with checkbox
+
+You can customize the Warning Modal to include a checkbox to double check the user wants to use the selected action.
+
+```js file="./WarningModalCheckboxExample.tsx"
+
+```
+
