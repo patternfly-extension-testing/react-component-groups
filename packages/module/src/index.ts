@@ -36,6 +36,12 @@ export * from './HorizontalNav';
 export { default as InvalidObject } from './InvalidObject';
 export * from './InvalidObject';
 
+export { default as LogSnippet } from './LogSnippet';
+export * from './LogSnippet';
+
+export { default as MultiContentCard } from './MultiContentCard';
+export * from './MultiContentCard';
+
 export { default as NotAuthorized } from './NotAuthorized';
 export * from './NotAuthorized';
 
