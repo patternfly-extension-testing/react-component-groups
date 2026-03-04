@@ -1,8 +1,8 @@
 ---
 # Sidenav top-level section
 # should be the same for all markdown files
-section: Component groups
-subsection: Controls
+section: extensions
+subsection: component-groups
 # Sidenav secondary level section
 # should be the same for all markdown files
 id: Bulk select
@@ -13,8 +13,9 @@ source: react
 propComponents: ['BulkSelect']
 sourceLink: https://github.com/patternfly/react-component-groups/blob/main/packages/module/patternfly-docs/content/extensions/component-groups/examples/BulkSelect/BulkSelect.md
 ---
-import { useState } from 'react';
+
 import { BulkSelect, BulkSelectValue } from '@patternfly/react-component-groups/dist/dynamic/BulkSelect';
+import { FunctionComponent, useState } from 'react';
 
 The **bulk select** provides a way of selecting data records in batches. You can select all data at once, all data on current page or deselect all.
 

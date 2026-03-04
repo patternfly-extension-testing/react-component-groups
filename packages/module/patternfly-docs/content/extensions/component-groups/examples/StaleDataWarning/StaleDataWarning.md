@@ -1,8 +1,8 @@
 ---
 # Sidenav top-level section
 # should be the same for all markdown files
-section: Component groups
-subsection: Status and state indicators
+section: extensions
+subsection: component-groups
 # Sidenav secondary level section
 # should be the same for all markdown files
 id: Stale data warning
@@ -15,14 +15,15 @@ sourceLink: https://github.com/patternfly/react-component-groups/blob/main/packa
 ---
 
 import StaleDataWarning from '@patternfly/react-component-groups/dist/dynamic/StaleDataWarning';
+import { Fragment, FunctionComponent } from 'react';
 
-A **stale data warning** component displays a warning status when an object is stale and planned for removal. Additional warning details can be displayed as a tooltip or text label. 
+A **stale data warning** component displays a warning status when an object is stale and planned for removal. Additional warning details can be displayed as a tooltip or text label.
 
 ## Examples
 
 ### Basic stale data warning example
 
-A basic stale data warning component displays a warning icon with additional details in a tooltip, including a timeline for data removal. 
+A basic stale data warning component displays a warning icon with additional details in a tooltip, including a timeline for data removal.
 
 ```js file="./StaleDataWarningExample.tsx"
 

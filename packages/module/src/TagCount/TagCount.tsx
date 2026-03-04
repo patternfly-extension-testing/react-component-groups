@@ -1,5 +1,5 @@
-import React from 'react';
-import clsx from 'clsx';
+import type { FunctionComponent } from 'react';
+import { css } from '@patternfly/react-styles';
 import { Button, ButtonProps, Icon } from '@patternfly/react-core';
 import { TagIcon } from '@patternfly/react-icons';
 import { createUseStyles } from 'react-jss'
@@ -33,17 +33,17 @@ export interface TagCountProps extends ButtonProps {
   ouiaId?: string | number;
 }
 
-const TagCount: React.FunctionComponent<TagCountProps> = ({
-  count, 
+const TagCount: FunctionComponent<TagCountProps> = ({
+  count,
   className,
   iconSize= 'md',
   ouiaId = 'TagCount',
-  ...props 
+  ...props
 }: TagCountProps) => {
   const classes = useStyles(!count);
-  const tagClasses = clsx(classes.buttonTagCount, className);
+  const tagClasses = css(classes.buttonTagCount, className);
   return (
-    <Button 
+    <Button
       icon={
         <>
           <Icon iconSize={iconSize} data-ouia-component-id={`${ouiaId}-icon`}>
@@ -52,7 +52,7 @@ const TagCount: React.FunctionComponent<TagCountProps> = ({
           <span className={classes.tagText} data-ouia-component-id={`${ouiaId}-text`}>{count}</span>
         </>
       }
-      aria-label="Tag count" 
+      aria-label="Tag count"
       {...props}
       variant="plain"
       isDisabled={!count}

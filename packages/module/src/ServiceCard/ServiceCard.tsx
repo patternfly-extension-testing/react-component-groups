@@ -1,9 +1,9 @@
-import React from 'react';
+import type { FunctionComponent } from 'react';
 import { Card, CardBody, CardFooter, CardHeader, CardProps, Content, ContentVariants, Flex, FlexItem } from '@patternfly/react-core';
 import { HelperText } from '@patternfly/react-core/dist/dynamic/components/HelperText';
 import { HelperTextItem } from '@patternfly/react-core/dist/dynamic/components/HelperText';
 import { createUseStyles } from 'react-jss';
-import clsx from 'clsx';
+import { css } from '@patternfly/react-styles';
 
 /** extends CardProps */
 export interface ServiceCardProps extends CardProps {
@@ -37,7 +37,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const ServiceCard: React.FunctionComponent<ServiceCardProps> = ({
+const ServiceCard: FunctionComponent<ServiceCardProps> = ({
   title,
   subtitle,
   description,
@@ -52,7 +52,7 @@ const ServiceCard: React.FunctionComponent<ServiceCardProps> = ({
   const classes = useStyles();
 
   return (
-    <Card className={clsx({ [classes.fullHeightCard]: isFullHeight })} ouiaId={`${ouiaId}-card`} {...props}>
+    <Card className={css({ [classes.fullHeightCard]: isFullHeight })} ouiaId={`${ouiaId}-card`} {...props}>
       <CardHeader>
         <Flex direction={{ default: isStacked ? 'column' : 'row' }} alignItems={{ default: isStacked ? 'alignItemsFlexStart' : 'alignItemsCenter' }}>
           <FlexItem className={classes.image}>

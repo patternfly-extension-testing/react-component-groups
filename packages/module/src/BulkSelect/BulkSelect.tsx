@@ -1,13 +1,16 @@
-import React, { useMemo, useState } from 'react';
+import type { FC, Ref } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Dropdown,
   DropdownItem,
   DropdownList,
+  DropdownListProps,
   DropdownProps,
   MenuToggle,
   MenuToggleCheckbox,
   MenuToggleCheckboxProps,
-  MenuToggleElement
+  MenuToggleElement,
+  MenuToggleProps
 } from '@patternfly/react-core';
 
 export const BulkSelectValue = {
@@ -43,9 +46,13 @@ export interface BulkSelectProps extends Omit<DropdownProps, 'toggle' | 'onSelec
   ouiaId?: string;
   /** Additional props for MenuToggleCheckbox */
   menuToggleCheckboxProps?: Omit<MenuToggleCheckboxProps, 'onChange' | 'isChecked' | 'instance' | 'ref'>;
+  /** Additional props for DropdownList */
+  dropdownListProps?: Omit<DropdownListProps, 'children'>;
+  /** Additional props for MenuToggleProps */
+  menuToggleProps?: Omit<MenuToggleProps, 'children' | 'splitButtonItems' | 'ref' | 'isExpanded' | 'onClick'>;
 }
 
-export const BulkSelect: React.FC<BulkSelectProps> = ({
+export const BulkSelect: FC<BulkSelectProps> = ({
   isDataPaginated = true,
   canSelectAll,
   pageSelected,
@@ -56,6 +63,8 @@ export const BulkSelect: React.FC<BulkSelectProps> = ({
   ouiaId = 'BulkSelect',
   onSelect,
   menuToggleCheckboxProps,
+  dropdownListProps,
+  menuToggleProps,
   ...props
 }: BulkSelectProps) => {
   const [ isOpen, setOpen ] = useState(false);
@@ -87,7 +96,7 @@ export const BulkSelect: React.FC<BulkSelectProps> = ({
   const onToggleClick = () => setOpen(!isOpen);
 
   return (
-    <Dropdown
+    (<Dropdown
       shouldFocusToggleOnSelect
       ouiaId={`${ouiaId}-dropdown`}
       onSelect={(_e, value) => {
@@ -96,7 +105,7 @@ export const BulkSelect: React.FC<BulkSelectProps> = ({
       }}
       isOpen={isOpen}
       onOpenChange={(isOpen: boolean) => setOpen(isOpen)}
-      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+      toggle={(toggleRef: Ref<MenuToggleElement>) => (
         <MenuToggle
           ref={toggleRef}
           isExpanded={isOpen}
@@ -111,25 +120,27 @@ export const BulkSelect: React.FC<BulkSelectProps> = ({
               aria-label={`Select ${allOption}`}
               isChecked={
                 (isDataPaginated && pagePartiallySelected) ||
-                  (!isDataPaginated && selectedCount > 0 && selectedCount < totalCount)
+                (!isDataPaginated && selectedCount > 0 && selectedCount < totalCount)
                   ? null
                   : pageSelected || (selectedCount === totalCount && totalCount > 0)
               }
               onChange={(checked) => onSelect?.(!checked || checked === null ? noneOption : allOption)}
               {...menuToggleCheckboxProps}
-            />,
-            selectedCount > 0 ? (
-              <span onClick={onToggleClick} data-ouia-component-id={`${ouiaId}-text`} key="bulk-select-text">
-                {`${selectedCount} selected`}
-              </span>
-            ) : null
+            >
+              {selectedCount > 0 ? (
+                <span data-ouia-component-id={`${ouiaId}-text`}>
+                  {`${selectedCount} selected`}
+                </span>
+              ) : null}
+            </MenuToggleCheckbox>
           ]}
+          {...menuToggleProps}
         />
       )}
       {...props}
     >
-      <DropdownList>{splitButtonDropdownItems}</DropdownList>
-    </Dropdown>
+      <DropdownList {...dropdownListProps}>{splitButtonDropdownItems}</DropdownList>
+    </Dropdown>)
   );
 };
 

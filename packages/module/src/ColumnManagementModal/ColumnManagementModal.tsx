@@ -1,52 +1,52 @@
-import React from 'react';
+import type { FunctionComponent } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Button,
   Content,
   ContentVariants,
-  DataListItem,
-  DataList,
-  DataListItemRow,
-  DataListCheck,
-  DataListCell,
-  DataListItemCells,
-  Split,
-  SplitItem,
-  ButtonVariant
+  ButtonVariant,
 } from '@patternfly/react-core';
 import { ModalProps, Modal, ModalVariant } from '@patternfly/react-core/deprecated';
+import ListManager, { ListManagerItem } from '../ListManager/ListManager';
 
 export interface ColumnManagementModalColumn {
   /** Internal identifier of a column by which table displayed columns are filtered. */
-  key: string,
+  key: string;
   /** The actual display name of the column possibly with a tooltip or icon. */
-  title: React.ReactNode,
+  title: React.ReactNode;
   /** If user changes checkboxes, the component will send back column array with this property altered. */
-  isShown?: boolean,
+  isShown?: boolean;
   /** Set to false if the column should be hidden initially */
-  isShownByDefault: boolean,
+  isShownByDefault: boolean;
   /** The checkbox will be disabled, this is applicable to columns which should not be toggleable by user */
-  isUntoggleable?: boolean
+  isUntoggleable?: boolean;
 }
 
 /** extends ModalProps */
 export interface ColumnManagementModalProps extends Omit<ModalProps, 'ref' | 'children'> {
   /** Flag to show the modal */
-  isOpen?: boolean,
+  isOpen?: boolean;
   /** Invoked when modal visibility is changed */
-  onClose?: (event: KeyboardEvent | React.MouseEvent) => void,
+  onClose?: (event: KeyboardEvent | React.MouseEvent) => void;
   /** Current column state */
-  appliedColumns: ColumnManagementModalColumn[],
+  appliedColumns: ColumnManagementModalColumn[];
   /** Invoked with new column state after save button is clicked */
-  applyColumns: (newColumns: ColumnManagementModalColumn[]) => void,
+  applyColumns: (newColumns: ColumnManagementModalColumn[]) => void;
   /* Modal description text */
-  description?: string,
+  description?: string;
   /* Modal title text */
-  title?: string,
+  title?: string;
   /** Custom OUIA ID */
-  ouiaId?: string | number,
-};
+  ouiaId?: string | number;
+  /** Enable drag and drop functionality for reordering columns */
+  enableDragDrop?: boolean;
+  /** Invoked when reset to default button is clicked */
+  onReset?: () => void;
+  /** Custom label for reset to default button */
+  resetToDefaultLabel?: string;
+}
 
-const ColumnManagementModal: React.FunctionComponent<ColumnManagementModalProps> = (
+const ColumnManagementModal: FunctionComponent<ColumnManagementModalProps> = (
   { title = 'Manage columns',
     description = 'Selected categories will be displayed in the table.',
     isOpen = false,
@@ -54,41 +54,79 @@ const ColumnManagementModal: React.FunctionComponent<ColumnManagementModalProps>
     appliedColumns,
     applyColumns,
     ouiaId = 'ColumnManagementModal',
+    enableDragDrop = false,
+    onReset,
+    resetToDefaultLabel = 'Reset to default',
     ...props }: ColumnManagementModalProps) => {
 
-  const [ currentColumns, setCurrentColumns ] = React.useState(
+  const [ currentColumns, setCurrentColumns ] = useState(() =>
     appliedColumns.map(column => ({ ...column, isShown: column.isShown ?? column.isShownByDefault }))
   );
 
-  const handleChange = index => {
-    const newColumns = [ ...currentColumns ];
-    const changedColumn = { ...newColumns[index] };
+  // Sync with appliedColumns when they change
+  useEffect(() => {
+    setCurrentColumns(appliedColumns.map(column => ({ ...column, isShown: column.isShown ?? column.isShownByDefault })));
+  }, [ appliedColumns ]);
 
-    changedColumn.isShown = !changedColumn.isShown;
-    newColumns[index] = changedColumn;
-
-    setCurrentColumns(newColumns);
-  };
-
-  const selectAll = () => {
-    let newColumns = [ ...currentColumns ];
-    newColumns = newColumns.map(column => ({ ...column, isShown: true }));
-
-    setCurrentColumns(newColumns);
-  };
+  // Convert ColumnManagementModalColumn to ListManagerItem
+  const listManagerItems: ListManagerItem[] = currentColumns.map(column => ({
+    key: column.key,
+    title: column.title,
+    isSelected: column.isShown,
+    isShownByDefault: column.isShownByDefault,
+    isUntoggleable: column.isUntoggleable
+  }));
 
   const resetToDefault = () => {
-    setCurrentColumns(currentColumns.map(column => ({ ...column, isShown: column.isShownByDefault ?? false })));
+    // Reset both visibility and order to match the original appliedColumns
+    setCurrentColumns(appliedColumns.map(column => ({ ...column, isShown: column.isShownByDefault ?? false })));
+    onReset?.();
   };
 
-  const handleSave = event => {
-    applyColumns(currentColumns);
-    onClose(event);
+  const updateColumns = (items: ListManagerItem[]) => {
+    const newColumns = currentColumns.map(column => {
+      const matchingItem = items.find(item => item.key === column.key);
+      return matchingItem
+        ? { ...column, isShown: matchingItem.isSelected ?? column.isShownByDefault }
+        : column;
+    });
+    setCurrentColumns(newColumns);
   };
 
-  const handleCancel = event => {
-    setCurrentColumns(appliedColumns.map(column => ({ ...column, isShown: column.isShown ?? column.isShownByDefault })));
-    onClose(event);
+  const handleSelect = (item: ListManagerItem) => {
+    updateColumns([ item ]);
+  };
+
+  const handleSelectAll = (items: ListManagerItem[]) => {
+    updateColumns(items);
+  };
+
+  const handleOrderChange = (items: ListManagerItem[]) => {
+    // Update the order of currentColumns based on the new order from ListManager
+    const newColumns = items.map(item => {
+      const originalColumn = currentColumns.find(col => col.key === item.key);
+      if (!originalColumn) {
+        throw new Error(`Column with key ${item.key} not found`);
+      }
+      return { ...originalColumn, isShown: item.isSelected ?? originalColumn.isShownByDefault };
+    });
+    setCurrentColumns(newColumns);
+  };
+
+  const handleSave = (items: ListManagerItem[]) => {
+    const updatedColumns = items.map(item => ({
+      key: item.key,
+      title: item.title,
+      isShown: item.isSelected,
+      isShownByDefault: item.isShownByDefault,
+      isUntoggleable: item.isUntoggleable
+    }));
+    applyColumns(updatedColumns);
+    onClose({} as KeyboardEvent);
+  };
+
+  const handleCancel = () => {
+    onClose({} as KeyboardEvent);
   };
 
   return (
@@ -100,56 +138,24 @@ const ColumnManagementModal: React.FunctionComponent<ColumnManagementModalProps>
       description={
         <>
           <Content component={ContentVariants.p}>{description}</Content>
-          <Split hasGutter>
-            <SplitItem>
-              <Button isInline onClick={selectAll} variant={ButtonVariant.link} ouiaId={`${ouiaId}-selectAll-button`}>
-                Select all
-              </Button>
-            </SplitItem>
-            <SplitItem>
-              <Button isInline onClick={resetToDefault} variant={ButtonVariant.link} ouiaId={`${ouiaId}-reset-button`}>
-                Reset to default
-              </Button>
-            </SplitItem>
-          </Split>
+          <Button isInline onClick={resetToDefault} variant={ButtonVariant.link} ouiaId={`${ouiaId}-reset-button`}>
+            {resetToDefaultLabel}
+          </Button>
         </>
       }
-      actions={[
-        <Button key="save" className='pf-v6-u-mr-md' variant={ButtonVariant.primary} onClick={handleSave} ouiaId={`${ouiaId}-save-button`}>
-          Save
-        </Button>,
-        <Button key="cancel" variant={ButtonVariant.link} onClick={handleCancel} ouiaId={`${ouiaId}-cancel-button`}>
-          Cancel
-        </Button>
-      ]}
       ouiaId={ouiaId}
       {...props}
     >
-      <DataList aria-label="Selected columns" isCompact data-ouia-component-id={`${ouiaId}-column-list`}>
-        {currentColumns.map((column, index) =>
-          <DataListItem key={column.key}>
-            <DataListItemRow>
-              <DataListCheck
-                isChecked={column.isShown}
-                onChange={() => handleChange(index)}
-                isDisabled={column.isUntoggleable}
-                aria-labelledby={`${ouiaId}-column${index}-label`}
-                ouiaId={`${ouiaId}-column${index}-checkbox`}
-                id={`${ouiaId}-column${index}-checkbox`}
-              />
-              <DataListItemCells
-                dataListCells={[
-                  <DataListCell key={column.key} data-ouia-component-id={`${ouiaId}-column${index}-label`}>
-                    <label htmlFor={`${ouiaId}-column${index}-checkbox`} id={`${ouiaId}-column${index}-label`}>
-                      {column.title}
-                    </label>
-                  </DataListCell>
-                ]}
-              />
-            </DataListItemRow>
-          </DataListItem>
-        )}
-      </DataList>
+      <ListManager
+        columns={listManagerItems}
+        ouiaId={ouiaId}
+        onSelect={handleSelect}
+        onSelectAll={handleSelectAll}
+        onOrderChange={handleOrderChange}
+        onSave={handleSave}
+        onCancel={handleCancel}
+        enableDragDrop={enableDragDrop}
+      />
     </Modal>
   );
 }

@@ -1,6 +1,6 @@
 ---
-section: Component groups
-subsection: Error communication
+section: extensions
+subsection: component-groups
 id: Unauthorized access
 source: react
 propComponents: ['UnauthorizedAccess']
@@ -8,6 +8,7 @@ sourceLink: https://github.com/patternfly/react-component-groups/blob/main/packa
 ---
 
 import UnauthorizedAccess from "@patternfly/react-component-groups/dist/dynamic/UnauthorizedAccess";
+import { FunctionComponent } from 'react';
 
 A **not authorized** component displays an error screen to users when they attempt to view a page that they don't have permission to access.
 
@@ -15,7 +16,7 @@ A **not authorized** component displays an error screen to users when they attem
 
 ### Basic unauthorized access
 
-A basic not authorized component displays a title, body text, and custom actions. 
+A basic not authorized component displays a title, body text, and custom actions.
 
 ```js file="./UnauthorizedAccessExample.tsx"
 

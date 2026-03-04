@@ -1,8 +1,8 @@
 ---
 # Sidenav top-level section
 # should be the same for all markdown files
-section: Component groups
-subsection: Status and state indicators
+section: extensions
+subsection: component-groups
 # Sidenav secondary level section
 # should be the same for all markdown files
 id: Ansible
@@ -15,12 +15,13 @@ sourceLink: https://github.com/patternfly/react-component-groups/blob/main/packa
 ---
 
 import Ansible from '@patternfly/react-component-groups/dist/dynamic/Ansible';
+import { FunctionComponent } from 'react';
 
 The **Ansible** component displays the Ansible project logo, with a support status style.
 
 ### Ansible supported
 
-By default, the Ansible logo displays as normal and in full color, meaning that it is supported. 
+By default, the Ansible logo displays as normal and in full color, meaning that it is supported.
 
 ```js file="./AnsibleSupportedExample.tsx"
 
@@ -34,8 +35,7 @@ To specify that Ansible is not supported, set the `isSupported` property to `fal
 
 ```
 
-
-### Red Hat Ansible Automation Platform 
+### Red Hat Ansible Automation Platform
 
 To display the Red Hat Ansible Automation Platform, add the `isRHAAP` property to the `<Ansible>` component.
 

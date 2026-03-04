@@ -1,8 +1,8 @@
 ---
 # Sidenav top-level section
 # should be the same for all markdown files
-section: Component groups
-subsection: Controls
+section: extensions
+subsection: component-groups
 # Sidenav secondary level section
 # should be the same for all markdown files
 id: Close button
@@ -16,6 +16,7 @@ sourceLink: https://github.com/patternfly/react-component-groups/blob/main/packa
 
 import { CloseIcon } from '@patternfly/react-icons';
 import CloseButton from '@patternfly/react-component-groups/dist/dynamic/CloseButton';
+import { FunctionComponent } from 'react';
 
 The **close button** component provides a way for users to exit a modal, dialogue, or similar action. To further customize this component, you can also utilize all properties of the [button component](/components/button).
 

@@ -1,8 +1,8 @@
-import React from 'react';
+import type { FunctionComponent } from 'react';
 import { Button, ButtonProps, ButtonVariant } from '@patternfly/react-core';
 import { CloseIcon } from '@patternfly/react-icons';
 import { createUseStyles } from 'react-jss';
-import clsx from 'clsx';
+import { css } from '@patternfly/react-styles';
 
 const useStyles = createUseStyles({
   closeButton: {
@@ -17,7 +17,7 @@ export interface CloseButtonProps extends ButtonProps {
   dataTestID?: string;
 };
 
-export const CloseButton: React.FunctionComponent<CloseButtonProps> = ({
+export const CloseButton: FunctionComponent<CloseButtonProps> = ({
   className,
   dataTestID,
   onClick,
@@ -28,7 +28,7 @@ export const CloseButton: React.FunctionComponent<CloseButtonProps> = ({
   return (
     <Button icon={<CloseIcon />}
       aria-label={props['aria-label'] || 'Close'}
-      className={clsx(classes.closeButton, className)}
+      className={css(classes.closeButton, className)}
       data-test-id={dataTestID}
       onClick={onClick}
       variant={ButtonVariant.plain}

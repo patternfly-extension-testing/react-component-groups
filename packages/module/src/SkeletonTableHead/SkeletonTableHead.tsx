@@ -1,4 +1,5 @@
-import React, { ReactNode, useMemo } from 'react';
+import type { FunctionComponent, ReactElement } from 'react';
+import { ReactNode, useMemo, isValidElement } from 'react';
 import {
   Th,
   ThProps,
@@ -8,6 +9,8 @@ import {
 import { Skeleton } from '@patternfly/react-core';
 
 export const isThObject = (value: ReactNode | { cell: ReactNode; props?: ThProps }): value is { cell: ReactNode; props?: ThProps } => value != null && typeof value === 'object' && 'cell' in value;
+
+export const isReactElement = (value: ReactNode): value is ReactElement => isValidElement(value);
 
 export interface SkeletonTableHeadProps {
   /** Custom columns for the table */
@@ -24,7 +27,7 @@ export interface SkeletonTableHeadProps {
   isTreeTable?: boolean;
 }
 
-export const SkeletonTableHead: React.FunctionComponent<SkeletonTableHeadProps> = ({
+export const SkeletonTableHead: FunctionComponent<SkeletonTableHeadProps> = ({
   ouiaId = 'SkeletonTableHeader',
   isSelectable,
   isExpandable,
@@ -40,18 +43,33 @@ export const SkeletonTableHead: React.FunctionComponent<SkeletonTableHeadProps> 
     ...(isExpandable ? [ <Th key="row-expand" screenReaderText='Data expansion table header cell' /> ] : []),
     ...(isSelectable && !isTreeTable ? [ <Th key="row-select" screenReaderText='Data selection table header cell' /> ] : []),
     ...(hasCustomColumns ? (
-      columns.map((column, index) => (
-        <Th key={index} {...(isThObject(column) && column?.props)} data-ouia-component-id={`${ouiaId}-th-${index}`}>
-          {isThObject(column) ? column.cell : column}
-        </Th>
-      ))
+      columns.map((column, index) => {
+        // If the column is an object with cell and props, wrap in Th
+        if (isThObject(column)) {
+          return (
+            <Th key={index} {...column.props} data-ouia-component-id={`${ouiaId}-th-${index}`}>
+              {column.cell}
+            </Th>
+          );
+        }
+        // If the column is already a React element (like <Th>), render it directly
+        if (isReactElement(column)) {
+          return column;
+        }
+        // Otherwise, wrap the content in Th
+        return (
+          <Th key={index} data-ouia-component-id={`${ouiaId}-th-${index}`}>
+            {column}
+          </Th>
+        );
+      })
     ) : (
       [ ...Array(rowCellsCount) ].map((_, index) => (
         <Th key={index} data-ouia-component-id={`${ouiaId}-th-${index}`}>
           <Skeleton />
         </Th>
       ))
-    )) 
+    ))
   ]
   , [ hasCustomColumns, isExpandable, isSelectable, isTreeTable, columns, rowCellsCount, ouiaId ]);
   

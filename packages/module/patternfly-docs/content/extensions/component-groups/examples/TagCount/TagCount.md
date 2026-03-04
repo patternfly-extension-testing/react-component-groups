@@ -1,8 +1,8 @@
 ---
 # Sidenav top-level section
 # should be the same for all markdown files
-section: Component groups
-subsection: Status and state indicators
+section: extensions
+subsection: component-groups
 # Sidenav secondary level section
 # should be the same for all markdown files
 id: Tag count
@@ -13,9 +13,11 @@ source: react
 propComponents: ['TagCount']
 sourceLink: https://github.com/patternfly/react-component-groups/blob/main/packages/module/patternfly-docs/content/extensions/component-groups/examples/TagCount/TagCount.md
 ---
-import TagCount from '@patternfly/react-component-groups/dist/dynamic/TagCount';
 
-The **tag count** component generates a tag icon that displays a number, which represents a count value. 
+import TagCount from '@patternfly/react-component-groups/dist/dynamic/TagCount';
+import { FunctionComponent } from 'react';
+
+The **tag count** component generates a tag icon that displays a number, which represents a count value.
 
 ## Examples
 
