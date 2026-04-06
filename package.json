@@ -85,8 +85,8 @@
     "whatwg-fetch": "^3.6.20"
   },
   "dependencies": {
-    "@patternfly/react-drag-drop": "^6.0.0",
-    "@patternfly/react-tokens": "^6.0.0",
+    "@patternfly/react-drag-drop": "^6.5.0-prerelease.51",
+    "@patternfly/react-tokens": "^6.5.0-prerelease.15",
     "sharp": "^0.34.0"
   }
 }
